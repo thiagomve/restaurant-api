@@ -3,7 +3,7 @@ import { afterEach } from "node:test";
 export default {
   client: "sqlite3",
   connection: {
-    filename: ".src/database/database.db",
+    filename: "./src/database/database.db",
   },
   pool: {
     afterCreate: (connection: any, done: any) => {
