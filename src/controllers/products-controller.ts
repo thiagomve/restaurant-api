@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { knexConfig } from "@/database/knex"
 import { z } from "zod"
 
 class ProductsController {
@@ -12,15 +13,16 @@ class ProductsController {
 
   async create(request: Request, response: Response, next: NextFunction){
     try {
-      // const { name, price } = request.body
       const bodySchema = z.object({
         name: z.string().trim().min(6),
         price: z.number().gt(0, { message: "value must be greater than 0" })
       })
 
       const { name, price } = bodySchema.parse(request.body)
+
+      await knexConfig<ProductRepository>("products").insert({ name, price })
       
-      return response.status(201).json({ name, price })
+      return response.status(201).json()
 
     } catch (error) {
        next(error)
