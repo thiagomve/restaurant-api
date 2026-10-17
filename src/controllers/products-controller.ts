@@ -60,7 +60,7 @@ class ProductsController {
         throw new AppError("product not found");
       }
 
-      await knexConfig<ProductRepository>("products").update({ name, price, updated: knexConfig.fn.now() }).where({ id })
+      await knexConfig<ProductRepository>("products").update({ name, price, updated_at: knexConfig.fn.now() }).where({ id })
 
       return response.json()
     } catch (error) {
