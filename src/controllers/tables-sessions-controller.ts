@@ -43,6 +43,36 @@ class TablesSessionsController {
       next(error)
     }
   }
+
+  async update(request: Request, response: Response, next: NextFunction) {
+    try {
+      const id = z
+        .string()
+        .transform((value) => Number(value))
+        .refine((value) => !isNaN(value), { message: "is must be a number" })
+        .parse(request.params.id)
+
+      const session = await knexConfig<TablesSessionsRepository>("tables_sessions")
+        .where({ id })
+        .first()
+
+      if (!session) {
+        throw new AppError("session table not found")
+      }
+
+      if (session.closet_at) {
+        throw new AppError("this session table this is already closed")
+      }
+
+      await knexConfig<TablesSessionsRepository>("tables_sessions")
+        .update({ closet_at: knexConfig.fn.now() })
+        .where({ id })
+
+      return response.json()
+    } catch (error) {
+      next(error)
+    }
+  }
 }
 
 export { TablesSessionsController };
